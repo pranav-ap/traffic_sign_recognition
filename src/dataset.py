@@ -1,12 +1,12 @@
 import os
-from typing import Dict, Optional
+from typing import Dict
 
 import lightning as L
 import numpy as np
 import torch
 import torchvision
 from torchvision import transforms as T
-from torch.utils.data import Subset
+from torch.utils.data import Subset, DataLoader
 from config import config
 from utils import logger
 
@@ -17,7 +17,8 @@ class TrafficSignsDataModule(L.LightningDataModule):
     def __init__(self):
         super().__init__()
 
-        self.num_workers = os.cpu_count()
+        self.num_workers = 0 if config.task.eda_mode else os.cpu_count()
+        self.persistent_workers = not config.task.eda_mode
 
         self.transform = T.Compose([
             T.Resize((config.image.image_size, config.image.image_size)),
@@ -55,21 +56,21 @@ class TrafficSignsDataModule(L.LightningDataModule):
             logger.info(f"Validation Dataset  : {len(self.datasets['val'])} samples")
 
     def train_dataloader(self):
-        return torch.utils.data.DataLoader(
+        return DataLoader(
             self.datasets['train'],
             batch_size=config.train.batch_size,
             shuffle=True,
             num_workers=self.num_workers,
-            persistent_workers=True,
+            persistent_workers=self.persistent_workers,
             pin_memory=True,
         )
 
     def val_dataloader(self):
-        return torch.utils.data.DataLoader(
+        return DataLoader(
             self.datasets['val'],
             batch_size=config.train.batch_size,
             shuffle=False,
             num_workers=self.num_workers,
-            persistent_workers=True,
+            persistent_workers=self.persistent_workers,
             pin_memory=True,
         )

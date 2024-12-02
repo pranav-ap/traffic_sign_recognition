@@ -1,5 +1,12 @@
 log_level: TRACE # TRACE WARNING
 
+task:
+    eda_mode: False  # True False
+
+experiment:
+    model: mobilenet
+    name: ${experiment.model}
+
 paths:
     roots:
         # /home/stud/ath/ath_ws/others/traffic_sign_recognition
@@ -34,3 +41,7 @@ train:
 
 val:
     batch_size: 32
+
+loggers:
+    #  - tensorboard
+   - neptune
