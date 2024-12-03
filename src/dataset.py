@@ -29,7 +29,7 @@ class TrafficSignsDataModule(L.LightningDataModule):
             ),
         ])
 
-        self.datasets: Dict[str, Subset] = {}
+        self.datasets: Dict[str, Subset | torchvision.datasets.GTSRB] = {}
 
     def setup(self, stage=None):
         if stage == "fit":
@@ -55,6 +55,17 @@ class TrafficSignsDataModule(L.LightningDataModule):
             logger.info(f"Train Dataset       : {len(self.datasets['train'])} samples")
             logger.info(f"Validation Dataset  : {len(self.datasets['val'])} samples")
 
+        if stage == "test":
+            test_data = torchvision.datasets.GTSRB(
+                root=config.paths.roots.data,
+                split='test',
+                download=True,
+                transform=self.transform,
+            )
+
+            self.datasets['test'] = test_data
+            logger.info(f"Test Dataset       : {len(self.datasets['test'])} samples")
+
     def train_dataloader(self):
         return DataLoader(
             self.datasets['train'],
@@ -69,6 +80,16 @@ class TrafficSignsDataModule(L.LightningDataModule):
         return DataLoader(
             self.datasets['val'],
             batch_size=config.train.batch_size,
+            shuffle=False,
+            num_workers=self.num_workers,
+            persistent_workers=self.persistent_workers,
+            pin_memory=True,
+        )
+
+    def test_dataloader(self):
+        return DataLoader(
+            self.datasets['test'],
+            batch_size=config.test.batch_size,
             shuffle=False,
             num_workers=self.num_workers,
             persistent_workers=self.persistent_workers,

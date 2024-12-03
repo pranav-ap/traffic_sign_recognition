@@ -11,36 +11,36 @@ paths:
     roots:
         # /home/stud/ath/ath_ws/others/traffic_sign_recognition
         # D:/code/traffic_sign_recognition
-        project_root: D:/code/traffic_sign_recognition
-        data: ${paths.roots.project_root}/data
-        output: ${paths.roots.project_root}/output
+        project: /home/stud/ath/ath_ws/others/traffic_sign_recognition
+        data: ${paths.roots.project}/data
+        output: ${paths.roots.project}/output
 
     output:
         logs: ${paths.roots.output}/logs
         checkpoints: ${paths.roots.output}/checkpoints
-        train_images: ${paths.roots.output}/train_images
-        val_images: ${paths.roots.output}/val_images
-        test_images: ${paths.roots.output}/test_images
 
 image:
     image_size: 224
 
 train:
-    batch_size: 32
+    batch_size: 64
 
-    fast_dev_run: False
+    fast_dev_run: False  # True False
     overfit_batches: 0
 
     patience: 3
-    max_epochs: 10
-    check_val_every_n_epoch: 5
+    max_epochs: 100
+    check_val_every_n_epoch: 3
     num_sanity_val_steps: 1
     log_every_n_steps: 1
     accumulate_grad_batches: 1
     learning_rate: 1e-4
 
 val:
-    batch_size: 32
+    batch_size: 64
+
+test:
+    batch_size: 64
 
 loggers:
     #  - tensorboard

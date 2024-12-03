@@ -16,7 +16,7 @@ class Light(pl.LightningModule):
         self.neptune_logger = neptune_logger
         self.tensorboard_logger = tensorboard_logger
 
-        self.model = TrafficSignRecognitionModel(num_classes=config.model.num_classes)
+        self.model = TrafficSignRecognitionModel()
 
         self.learning_rate = config.train.learning_rate
 
@@ -82,11 +82,9 @@ class Light(pl.LightningModule):
         images, labels = batch
         logits = self.model(images)
 
-        loss = self._compute_loss(logits, labels)
         accuracy = self._compute_accuracy(logits, labels)
 
         metrics = {
-            "test/loss": loss,
             "test/accuracy": accuracy,
         }
 
@@ -107,7 +105,7 @@ class Light(pl.LightningModule):
                 patience=2,
                 factor=0.5
             ),
-            "monitor": "val/loss",
+            "monitor": "train/loss",
             "interval": "epoch",
             "frequency": 1,
         }

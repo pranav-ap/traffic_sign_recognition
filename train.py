@@ -64,8 +64,6 @@ def train():
 
 def prep_directories():
     logger.info("Clearing Directories")
-    make_clear_directory(config.paths.output.train_images)
-    make_clear_directory(config.paths.output.val_images)
     make_clear_directory(config.paths.output.checkpoints)
 
 
